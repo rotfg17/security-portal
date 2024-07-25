@@ -4,10 +4,6 @@ import { Outlet, Link, useNavigate } from 'react-router-dom';
 const Main = () => {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // Aquí puedes añadir la lógica para manejar el logout, como limpiar el estado de autenticación
-    navigate('/');
-  };
 
   return (
     <div className="d-flex">
@@ -26,10 +22,13 @@ const Main = () => {
           <li>
             <Link to="registerinfo">Register Information</Link>
           </li>
+          <li>
+            <Link to="assignproject">Project Assign</Link>
+          </li>
         </ul>
         
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-        <button onClick={handleLogout} className="btn btn-info text-light position-relative rounded-pill"style={{ width: '140vh' }}>
+        <div className="d-flex justify-content-center align-items-center" style={{ height: '90vh' }}>
+        <button className="btn btn-info text-light position-relative rounded-pill"style={{ width: '140vh' }}>
           Log Out
         </button>
         </div>

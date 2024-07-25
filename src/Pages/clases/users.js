@@ -23,7 +23,7 @@ export class Staff extends User {
   }
 }
 
-export class Admin extends Staff {
+export class Admin extends User {
   constructor(email, pass) {
     super(email, pass, 'a');
   }

@@ -8,5 +8,4 @@ const StaffDashboard = () => {
     </div>
   );
 };
-
 export default StaffDashboard;

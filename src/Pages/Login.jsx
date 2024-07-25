@@ -1,48 +1,30 @@
-// Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PostService from '../services/http-services';
-import logo from './Assets/img/logo.png';
+import logo from '../Pages/Assets/img/logo.png';
 import '@fortawesome/fontawesome-free/css/all.min.css';
-import { User, Staff, Admin, Client } from './clases/users'; 
+import { useUser } from '../UserContext';
 
-const Login = ({ setCurrentUser }) => {
+const Login = () => {
   const navigate = useNavigate();
-  const [user, setUser] = useState({ email: '', pass: '', role: '' });
+  const { login } = useUser();
+  const [user, setUserState] = useState({ email: '', pass: '', role: '' });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    let userInstance;
-    switch (user.role) {
-      case 's':
-        userInstance = new Staff(user.email, user.pass);
-        break;
-      case 'c':
-        userInstance = new Client(user.email, user.pass);
-        break;
-      case 'a':
-        userInstance = new Admin(user.email, user.pass);
-        break;
-      default:
-        console.error('Invalid role');
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('email', user.email);
-    formData.append('pass', user.pass);
-    formData.append('role', user.role);
+    const form = new FormData(e.target); // Add data to a FormData object
 
     try {
-      const response = await PostService.post('login', formData);
-      console.log(response.data);
+      const response = await PostService.post('login', form); // Send POST request
+      sessionStorage.setItem('sid',response.data);
+      // Use the context login function
+      login({ ...user, ...response.data });
 
-      setCurrentUser(userInstance); // Set the current user in App.js
-
-      if (userInstance.role === 's') {
-        navigate('/main/staff');
-      } else if (userInstance.role === 'a') {
+      // Redirect based on user role
+      if (user.role === 'a') {
         navigate('/main/admin');
+      } else if (user.role === 's') {
+        navigate('/main/staff'); 
       } else {
         navigate('/main/user');
       } 
@@ -53,7 +35,7 @@ const Login = ({ setCurrentUser }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUser((prevUser) => ({ ...prevUser, [name]: value }));
+    setUserState((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
   return (
@@ -93,9 +75,9 @@ const Login = ({ setCurrentUser }) => {
               onChange={handleInputChange}
             >
               <option value="">Select your Role</option>
-              <option value="c">Client</option>
-              <option value="s">Staff</option>
               <option value="a">Admin</option>
+              <option value="s">Staff</option>
+              <option value="c">Client</option>
             </select>
           </div>
           <button type="submit" className="btn btn-info text-light position-relative rounded-pill" style={{ width: '100%' }}>

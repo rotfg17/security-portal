@@ -8,28 +8,22 @@ const ProjectRegistration = () => {
     projectName: '',
     projectScheme: '',
     pps: '',
-    fgaTime: '',
-    sid: '',
+    fgaTime: ''
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const data = new FormData();
-    Object.keys(formData).forEach(key => {
-      data.append(key, formData[key]);
-    });
 
+    const data = new FormData(e.target);
+    const sid =sessionStorage.getItem('sid');
+    data.append('sid',sid);
     try {
-      const response = await PostService.post('/projreg', data); // Assuming the endpoint is /projreg
+      const response = await PostService.post('projreg', data); 
       console.log('Project registered successfully', response.data);
       // Handle success (e.g., display a success message or redirect)
     } catch (error) {
@@ -106,18 +100,6 @@ const ProjectRegistration = () => {
             name="fgaTime"
             className="form-control"
             value={formData.fgaTime}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label htmlFor="sid" className="form-label">SID</label>
-          <input
-            type="text"
-            id="sid"
-            name="sid"
-            className="form-control"
-            value={formData.sid}
             onChange={handleChange}
             required
           />
