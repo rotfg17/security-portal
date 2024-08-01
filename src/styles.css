@@ -14,7 +14,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    background: #f8f9fa;
+    background: #d6fff6 ;
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   }
@@ -42,7 +42,7 @@ body {
   }
   
   .sidebar ul li a:hover {
-    background: #09c0e5;
+    background: #457b9d;
     color: #fff;
   }
   
@@ -51,4 +51,28 @@ body {
     padding: 20px;
     width: calc(100% - 250px);
   }
+
+  .links{
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #457b9d;
+    border-radius: 5px 5px;
+  }
+
+  .links li {
+    margin: 10px;
+    
+    padding: 5px;
+    border-radius: 5px;
+  }
+
+  .links li a {
+    text-decoration: none;
+    color: #fff;
+  }
   
+  .btn {
+    background: #274c77;
+  }

@@ -1,78 +1,101 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { useUser } from '../../UserContext';
 import PostService from '../../services/http-services';
 
 const AssignProject = () => {
-  const { user } = useUser();
   const [projects, setProjects] = useState([]);
-  const [staff, setStaff] = useState([]);
+  const [users, setUsers] = useState([]);
   const [selectedProject, setSelectedProject] = useState('');
   const [selectedUser, setSelectedUser] = useState('');
-
-  useEffect(() => {
-    const fetchData = async (e) => {
-      try {
-        if (user) {
-          // Fetch projects
-          const projectsResponse = await PostService.post('projall', {
-            params: { sid: JSON.parse(sessionStorage.getItem('sid')) }
-          });
-          setProjects(projectsResponse.data);
   
-          // Fetch users based on role
-          const staffResponse = await await PostService.post('users', {
-            params: { sid: JSON.parse(sessionStorage.getItem('sid')), role: 's' } // 's' for Staff
-          });
-          setStaff(staffResponse.data);
-        }
+    const fetchProjects = async () => {
+      const sid = sessionStorage.getItem('sid');
+      const data = new FormData();
+      data.append('sid', sid);
+
+      try {
+        const response = await PostService.post('projall', data);
+        setProjects(response.data); 
+        console.log('Projects fetched successfully', response.data);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching projects', error);
       }
     };
-  
-    fetchData();
-  }, [user]);
-  
 
-  const handleAssign = () => {
-    axios.post('http://192.168.0.10/fga/index.php/projassign', {
-      sid: JSON.parse(sessionStorage.getItem('sid')),
-      projectCode: selectedProject,
-      uid: selectedUser
-    })
-    .then(response => {
-      console.log('Project assigned successfully:', response.data);
-      // Optionally, refresh the lists or show a success message
-    })
-    .catch(error => console.error('Error assigning project:', error));
+    const fetchUsers = async () => {
+      const sid = sessionStorage.getItem('sid');
+      const data = new FormData();
+      data.append('sid', sid);
+      data.append('role', 'c'); 
+
+      try {
+        const response = await PostService.post('users', data);
+        setUsers(response.data); 
+        console.log('Users fetched successfully', response.data);
+      } catch (error) {
+        console.error('Error fetching users', error);
+      }
+    };
+
+    fetchProjects();
+    fetchUsers();
+
+
+  const handleAssign = async () => {
+    const projA = new FormData();
+    projA.append('sid', sessionStorage.getItem('sid'));
+    projA.append('projectCode', selectedProject);
+    projA.append('uid', selectedUser);
+
+    try {
+      const response = await PostService.post('projassign', projA);
+      console.log('Project assigned successfully', response.data);
+    } catch (error) {
+      console.error('Error assigning project', error);
+    }
   };
 
   return (
     <div className="container">
-      <h2 className="my-4">Assign Project</h2>
+      <h2 className="my-4">Assign Project to User</h2>
       <div className="mb-3">
-        <label htmlFor="project" className="form-label">Select Project:</label>
-        <select id="project" className="form-control" value={selectedProject} onChange={e => setSelectedProject(e.target.value)}
+        <label htmlFor="project" className="form-label">Select Project</label>
+        <select
+          id="project"
+          name="project"
+          className="form-select"
+          value={selectedProject}
+          onChange={(e) => setSelectedProject(e.target.value)}
+          required
         >
-          <option value="">Select a Project</option>
-          {projects.map(project => (<option key={project.code} value={project.code}>{project.name}
+          <option value="">Select Project</option>
+          {projects.map((project) => (
+            <option key={project.projectCode} value={project.projectCode}>
+              {project.projectName}
             </option>
           ))}
         </select>
       </div>
-
       <div className="mb-3">
-        <label htmlFor="user" className="form-label">Select User:</label>
-        <select id="user" className="form-control" value={selectedUser} onChange={e => setSelectedUser(e.target.value)}
+        <label htmlFor="user" className="form-label">Select User</label>
+        <select
+          id="user"
+          name="user"
+          className="form-select"
+          value={selectedUser}
+          onChange={(e) => setSelectedUser(e.target.value)}
+          required
         >
-          <option value="">Select a User</option>
-          {staff.map(user => ( <option key={user.id} value={user.id}> {user.name}
+          <option value="">Select User</option>
+          {users.map((user) => (
+            <option key={user.uid} value={user.uid}>
+              {user.fname}
             </option>
           ))}
         </select>
       </div>
-      <button onClick={handleAssign} className="btn btn-info text-light position-relative rounded-pill">Assign Project</button>
+      <button onClick={handleAssign} className="btn btn-info text-light">
+        Assign Project
+      </button>
     </div>
   );
 };

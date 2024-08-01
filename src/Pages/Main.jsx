@@ -1,45 +1,50 @@
-import React, { useLayoutEffect } from 'react';
-import { Outlet, Link, useNavigate } from 'react-router-dom';
+import React, { useState, useLayoutEffect } from 'react';
+import { Outlet, Link } from 'react-router-dom';
+import '../styles.css'
 
 const Main = () => {
-  const navigate = useNavigate();
+  const [selectedDashboard, setSelectedDashboard] = useState('');
 
+  const handleNavClick = (dashboard) => {
+    setSelectedDashboard(dashboard);
+  };
+
+  // Apply styles based on the selected dashboard
   useLayoutEffect(() => {
-    const mainContent = document.querySelector('.main-content');
-    if (mainContent) {
-      mainContent.style.opacity = 1;
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      if (selectedDashboard === 'admin') {
+        sidebar.style.backgroundColor = '#d6fff6'; // Color for Admin Dashboard
+      } else if (selectedDashboard === 'staff') {
+        sidebar.style.backgroundColor = '#e7c6ff'; // Color for Staff Dashboard
+      } else if (selectedDashboard === 'user') {
+        sidebar.style.backgroundColor = '#b8c0ff'; // Color for User Dashboard
+      } else {
+        sidebar.style.backgroundColor = ''; // Default or no background
+      }
     }
-  }, []);
+  }, [selectedDashboard]);
 
   return (
     <div className="d-flex">
-      <nav className="sidebar bg-light">
+      <nav className="sidebar">
         <h2>Dashboard</h2>
         <ul>
           <li>
-            <Link to="admin">Admin Dashboard</Link>
+            <Link to="/main/admin" onClick={() => handleNavClick('admin')}>Admin Dashboard</Link>
           </li>
           <li>
-            <Link to="staff">Staff Dashboard</Link>
+            <Link to="/main/staff" onClick={() => handleNavClick('staff')}>Staff Dashboard</Link>
           </li>
           <li>
-            <Link to="user">User Dashboard</Link>
-          </li>
-          <li>
-            <Link to="registerinfo">Register Information</Link>
-          </li>
-          <li>
-            <Link to="assignproject">Project Assign</Link>
+            <Link to="/main/user" onClick={() => handleNavClick('user')}>User Dashboard</Link>
           </li>
         </ul>
-        
-        <div className="d-flex justify-content-center align-items-center" style={{ height: '90vh' }}>
-          <button className="btn btn-info text-light position-relative rounded-pill" style={{ width: '140px' }}>
-            Log Out
-          </button>
+        <div className="d-flex justify-content-center align-items-center">
+          <button className="btn btn-info text-light" style={{ width: '140px' }}>Log Out</button>
         </div>
       </nav>
-      <div className="main-content p-3" style={{ marginLeft: '250px', width: 'calc(100% - 250px)', opacity: 0 }}>
+      <div className="main-content p-3" style={{ marginLeft: '250px', width: 'calc(100% - 250px)' }}>
         <Outlet />
       </div>
     </div>

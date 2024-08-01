@@ -12,24 +12,45 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = new FormData(e.target); // Add data to a FormData object
+    const form = new FormData(e.target);
 
     try {
-      const response = await PostService.post('login', form); // Send POST request
-      sessionStorage.setItem('sid',response.data);
-      // Use the context login function
-      login({ ...user, ...response.data });
+      // Enviar solicitud de inicio de sesión
+      const response = await PostService.post('login', form);
+      const sid = response.data;
+      sessionStorage.setItem('sid', sid);
 
-      // Redirect based on user role
-      if (user.role === 'a') {
-        navigate('/main/admin');
-      } else if (user.role === 's') {
-        navigate('/main/staff'); 
-      } else {
-        navigate('/main/user');
-      } 
+      // Obtener información adicional del usuario
+      const infoData = new FormData();
+      infoData.append('sid', sid);
+      const infoResponse = await PostService.post('info', infoData);
+      const uid = infoResponse.data.uid;
+
+      // if (typeof uid !== 'string' && typeof uid !== 'number') {
+      //   throw new Error('Invalid UID format');
+      // }
+
+      sessionStorage.setItem('uid', uid.toString());
+
+      // Actualizar el estado del usuario con la información obtenida
+      const updatedUser = { ...user, ...infoResponse.data };
+      login(updatedUser);
+
+      // Redirigir según el rol del usuario
+      switch (updatedUser.role) {
+        case 'a':
+          navigate('/main/admin');
+          break;
+        case 's':
+          navigate('/main/staff');
+          break;
+        default:
+          navigate('/main/user');
+          break;
+      }
     } catch (error) {
       console.error('Login failed:', error);
+      // Manejar errores de inicio de sesión
     }
   };
 
@@ -40,7 +61,7 @@ const Login = () => {
 
   return (
     <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-      <div className="col-md-3 border-none p-3 mb-5 bg-info bg-opacity-10 rounded shadow-lg">
+      <div className="col-md-3 border-none p-3 mb-5  bg-opacity-10 rounded shadow-lg" style={{  background: '#d6fff6'}}>
         <form onSubmit={handleSubmit}>
           <div className="mb-3 d-flex justify-content-center align-items-center">
             <img src={logo} alt="logo" width="60" height="60" />
@@ -85,7 +106,7 @@ const Login = () => {
           </button>
           <div className="d-flex justify-content-center align-items-center mt-3">
             <span>Don't have an account? </span>
-            <a href="/register" className='text-info ms-1' style={{ textDecoration: 'none' }}>Register</a>
+            <a href="/register" className="text-info ms-1" style={{ textDecoration: 'none' }}>Register</a>
           </div>
         </form>
       </div>

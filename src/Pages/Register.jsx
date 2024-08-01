@@ -52,7 +52,7 @@ const Register = () => {
   return (
 //Register form design
     <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
-      <div className="col-md-3 border-none p-3 mb-5 bg-info bg-opacity-10 rounded shadow-lg">
+      <div className="col-md-3 border-none p-3 mb-5 bg-opacity-10 rounded shadow-lg"style={{  background: '#d6fff6'}}>
         <form onSubmit={submitHandler}>
           <div className="mb-3 d-flex justify-content-center align-items-center">
             <img src={logo} alt="logo" width="60" height="60" />

@@ -13,17 +13,17 @@ const ProjectRegistration = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-     setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = new FormData(e.target);
-    const sid =sessionStorage.getItem('sid');
-    data.append('sid',sid);
+    const sid = sessionStorage.getItem('sid');
+    data.append('sid', sid);
     try {
-      const response = await PostService.post('projreg', data); 
+      const response = await PostService.post('projreg', data);
       console.log('Project registered successfully', response.data);
       // Handle success (e.g., display a success message or redirect)
     } catch (error) {
@@ -104,7 +104,7 @@ const ProjectRegistration = () => {
             required
           />
         </div>
-        <button type="submit" className="btn btn-info text-light position-relative rounded-pill">Register</button>
+        <button type="submit" className="btn btn-info text-light">Register</button>
       </form>
     </div>
   );
